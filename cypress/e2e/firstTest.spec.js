@@ -77,7 +77,7 @@ describe('Test grabbing an element', () => {
     cy.contains('nb-card', 'Horizontal form').find('[type="email"]')
   })
 
-  it.only('then and wrap methods', () => {
+  it('then and wrap methods', () => {
     cy.visit('/')
     cy.contains('Forms').click()
     cy.contains('Form Layouts').click()
@@ -115,5 +115,35 @@ describe('Test grabbing an element', () => {
         cy.wrap(secondForm).find('[for="exampleInputPassword1"]').should('contain', 'Password')
       })
     })
+  })
+
+  it('invoke commands', () => {
+    cy.visit('/')
+    cy.contains('Forms').click()
+    cy.contains('Form Layouts').click()
+
+    //1
+    cy.get('[for="exampleInputEmail1"]').should('contain', 'Email address')
+
+    //2
+    cy.get('[for="exampleInputEmail1"]').then(label => {
+      expect(label.text()).to.equal('Email address')
+    })
+
+    //3
+    cy.get('[for="exampleInputEmail1"]').invoke('text').then(text => {
+      expect(text).to.equal('Email address')
+    })
+
+    //Check checkbox is clicked
+    cy.contains('nb-card', 'Basic form')
+      .find('nb-checkbox')
+      .click()
+      .find('.custom-checkbox')
+      .invoke('attr', 'class')
+      //.should('contain', 'checked')
+      .then(classValue => {
+        expect(classValue).to.contain('checked')
+      })
   })
 })
