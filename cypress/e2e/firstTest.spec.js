@@ -146,4 +146,19 @@ describe('Test grabbing an element', () => {
         expect(classValue).to.contain('checked')
       })
   })
+
+  it.only('asserts property', () => {
+    cy.visit('/')
+    cy.contains('Forms').click()
+    cy.contains('Datepicker').click()
+
+    //Clicking on date picker
+    cy.contains('nb-card', 'Common Datepicker')
+      .find('input')
+      .then(input => {
+        cy.wrap(input).click()
+        cy.get('nb-calendar-day-picker').contains('17').click()
+        cy.wrap(input).invoke('prop', 'value').should('contain', 'Oct 17, 2022')
+      })
+  })
 })
