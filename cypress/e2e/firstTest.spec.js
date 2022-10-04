@@ -54,4 +54,26 @@ describe('Test grabbing an element', () => {
     //By the most recommended way by Cypress
     cy.get('[data-cy="inputEmail1"]')
   })
+
+  it.only('finds the sign in buttons', () => {
+    cy.visit('/')
+    cy.contains('Forms').click()
+    cy.contains('Form Layouts').click()
+
+    cy.get('[data-cy="signInButton"]')
+
+    cy.contains('[status="warning"]', 'Sign in')
+
+    //Find by going up to parent div and then in parent div
+    cy.get('#inputEmail3')
+      .parents('form')
+      .find('button')
+      .should('contain', 'Sign in')
+      .parents('form')
+      .find('nb-checkbox')
+      .click()
+
+    //Find using a sibling element
+    cy.contains('nb-card', 'Horizontal form').find('[type="email"]')
+  })
 })
