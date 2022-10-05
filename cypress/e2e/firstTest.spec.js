@@ -162,7 +162,7 @@ describe('Test grabbing an element', () => {
       })
   })
 
-  it.only('tests radio buttons', () => {
+  it('tests radio buttons', () => {
     cy.visit('/')
     cy.contains('Forms').click()
     cy.contains('Form Layouts').click()
@@ -188,5 +188,14 @@ describe('Test grabbing an element', () => {
       .eq(2)
       .should('be.disabled')
     })
+  })
+
+  it.only('tests checkboxes', () => {
+    cy.visit('/')
+    cy.contains('Modal & Overlays').click()
+    cy.contains('Toaster').click()
+
+    cy.get('[type="checkbox"]').eq(1).click({force: true}) //To uncheck checkboxes
+    cy.get('[type="checkbox"]').eq(0).check({force: true}) //Only can check, can't uncheck
   })
 })
