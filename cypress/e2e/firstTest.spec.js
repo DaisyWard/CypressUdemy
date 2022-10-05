@@ -147,13 +147,12 @@ describe('Test grabbing an element', () => {
       })
   })
 
-  it.only('asserts property', () => {
+  it('asserts property', () => {
     cy.visit('/')
     cy.contains('Forms').click()
     cy.contains('Datepicker').click()
 
     //Clicking on date picker
-
     function selectDayFromCurrent(day = 1) {
       let date = new Date()
       date.setDate(date.getDate() + day)
@@ -173,12 +172,10 @@ describe('Test grabbing an element', () => {
       return dateAssert
     }
 
-
     cy.contains('nb-card', 'Common Datepicker')
       .find('input')
       .then(input => {
         cy.wrap(input).click()
-
 
         let dateAssert = selectDayFromCurrent(1)
 
@@ -299,5 +296,14 @@ describe('Test grabbing an element', () => {
         }
       })
     })
+  })
+
+  it.only('tests tooltips', () => {
+    cy.visit('/')
+    cy.contains('Modal & Overlays').click()
+    cy.contains('Tooltip').click()
+
+    cy.contains('nb-card', 'Colored Tooltips').contains('Default').click()
+    cy.get('nb-tooltip').should('contain', 'This is a tooltip')
   })
 })
