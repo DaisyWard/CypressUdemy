@@ -147,7 +147,7 @@ describe('Test grabbing an element', () => {
       })
   })
 
-  it.only('asserts property', () => {
+  it('asserts property', () => {
     cy.visit('/')
     cy.contains('Forms').click()
     cy.contains('Datepicker').click()
@@ -160,5 +160,33 @@ describe('Test grabbing an element', () => {
         cy.get('nb-calendar-day-picker').contains('17').click()
         cy.wrap(input).invoke('prop', 'value').should('contain', 'Oct 17, 2022')
       })
+  })
+
+  it.only('tests radio buttons', () => {
+    cy.visit('/')
+    cy.contains('Forms').click()
+    cy.contains('Form Layouts').click()
+
+    cy.contains('nb-card', 'Using the Grid')
+    .find('[type="radio"]')
+    .then(radioButtons => {
+      cy.wrap(radioButtons)
+        .first()
+        .check({force: true}) //Element is visibily hidden - custom checkbox
+        .should('be.checked')
+
+
+    cy.wrap(radioButtons)
+      .eq(1) //Find second radio button
+      .check({force: true})
+
+    cy.wrap(radioButtons)
+      .first()
+      .should('not.be.checked')
+
+    cy.wrap(radioButtons)
+      .eq(2)
+      .should('be.disabled')
+    })
   })
 })
