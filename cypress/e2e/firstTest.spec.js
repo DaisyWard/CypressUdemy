@@ -199,7 +199,7 @@ describe('Test grabbing an element', () => {
     cy.get('[type="checkbox"]').eq(0).check({force: true}) //Only can check, can't uncheck
   })
 
-  it.only('test lists and dropdowns', () => {
+  it('test lists and dropdowns', () => {
     cy.visit('/')
 
     //Testing theme colour dropdown
@@ -225,6 +225,56 @@ describe('Test grabbing an element', () => {
         cy.get('nb-layout-header nav').should('have.css', 'background-color', colors[itemText])
 
         if (index < 3) cy.wrap(dropdown).click()
+      })
+    })
+  })
+
+  it.only('tests smart table', () => {
+    cy.visit('/')
+    cy.contains('Tables & Data').click()
+    cy.contains('Smart Table').click()
+
+    //Editing a value
+    cy.get('tbody').contains('tr', 'Larry').then(tableRow => {
+      cy.wrap(tableRow).find('.nb-edit').click()
+      cy.wrap(tableRow).find('[placeholder="Age"]').clear().type('25') //Clear before typing new value
+      cy.wrap(tableRow).find('.nb-checkmark').click()
+      cy.wrap(tableRow).find('td').eq(6).should('contain', '25')
+    })
+
+    //Adding a new row
+    cy.get('thead').find('.nb-plus').click()
+    cy.get('thead').find('tr').eq(2).then(tableRow => {
+      cy.wrap(tableRow).find('[placeholder="First Name"]').type('Daisy')
+      cy.wrap(tableRow).find('[placeholder="Last Name"]').type('Ward')
+      cy.wrap(tableRow).find('.nb-checkmark').click()
+    })
+
+    cy.get('tbody tr').first().find('td').then(columns => {
+      cy.wrap(columns).eq(2).should('contain', 'Daisy')
+      cy.wrap(columns).eq(3).should('contain', 'Ward')
+    })
+
+
+
+    //Searching/Filtering a table
+    // cy.get('thead [placeholder="Age"]').type('20')
+    // cy.wait(500) //Wait for table to update
+    // cy.get('tbody tr').each(tableRow => {
+    //   cy.wrap(tableRow).find('td').eq(6).should('contain', 20)
+    // })
+
+    //Searching/Filtering a table with array
+    const age = [20, 30, 40, 200]
+    cy.wrap(age).each(age => {
+      cy.get('thead [placeholder="Age"]').clear().type(age)
+      cy.wait(500) //Wait for table to update
+      cy.get('tbody tr').each(tableRow => {
+        if(age === 200) {
+          cy.wrap(tableRow).should('contain', 'No data found')//Test sad path
+        } else {
+          cy.wrap(tableRow).find('td').eq(6).should('contain', age)
+        }
       })
     })
   })
