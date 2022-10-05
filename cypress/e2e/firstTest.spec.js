@@ -147,18 +147,42 @@ describe('Test grabbing an element', () => {
       })
   })
 
-  it('asserts property', () => {
+  it.only('asserts property', () => {
     cy.visit('/')
     cy.contains('Forms').click()
     cy.contains('Datepicker').click()
 
     //Clicking on date picker
+
+    function selectDayFromCurrent(day = 1) {
+      let date = new Date()
+      date.setDate(date.getDate() + day)
+      let futureDay = date.getDate()
+      let futureMonth = date.toLocaleString('default', {month: 'short'})
+      let dateAssert = futureMonth + ' ' + futureDay + ', ' + date.getFullYear()
+
+      cy.get('nb-calendar-navigation').invoke('attr', 'ng-reflect-date').then(dateAttr => {
+        if (!dateAttr.includes(futureMonth)) {
+          cy.get('[data-name="chevron-right"]').click()
+          selectDayFromCurrent(day)
+        } else {
+          cy.get('nb-calendar-day-picker [class="day-cell ng-star-inserted"]').contains(futureDay).click()
+        }
+      })
+
+      return dateAssert
+    }
+
+
     cy.contains('nb-card', 'Common Datepicker')
       .find('input')
       .then(input => {
         cy.wrap(input).click()
-        cy.get('nb-calendar-day-picker').contains('17').click()
-        cy.wrap(input).invoke('prop', 'value').should('contain', 'Oct 17, 2022')
+
+
+        let dateAssert = selectDayFromCurrent(1)
+
+        cy.wrap(input).invoke('prop', 'value').should('contain', dateAssert)
       })
   })
 
@@ -229,7 +253,7 @@ describe('Test grabbing an element', () => {
     })
   })
 
-  it.only('tests smart table', () => {
+  it('tests smart table', () => {
     cy.visit('/')
     cy.contains('Tables & Data').click()
     cy.contains('Smart Table').click()
@@ -254,8 +278,6 @@ describe('Test grabbing an element', () => {
       cy.wrap(columns).eq(2).should('contain', 'Daisy')
       cy.wrap(columns).eq(3).should('contain', 'Ward')
     })
-
-
 
     //Searching/Filtering a table
     // cy.get('thead [placeholder="Age"]').type('20')
