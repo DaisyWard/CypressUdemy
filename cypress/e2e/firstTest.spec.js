@@ -123,11 +123,16 @@ describe('Test grabbing an element', () => {
     cy.contains('Form Layouts').click()
 
     //1
-    cy.get('[for="exampleInputEmail1"]').should('contain', 'Email address')
+    cy.get('[for="exampleInputEmail1"]')
+      .should('contain', 'Email address')
+      .should('have.class', 'label')
+      .and('have.text', 'Email address')
 
     //2
     cy.get('[for="exampleInputEmail1"]').then(label => {
       expect(label.text()).to.equal('Email address')
+      expect(label).to.have.class('label')
+      expect(label).to.have.text('Email address')
     })
 
     //3
@@ -180,6 +185,7 @@ describe('Test grabbing an element', () => {
         let dateAssert = selectDayFromCurrent(1)
 
         cy.wrap(input).invoke('prop', 'value').should('contain', dateAssert)
+        // cy.wrap(input).should('have.value', dateAssert) Same as above, different syntax
       })
   })
 
@@ -307,7 +313,7 @@ describe('Test grabbing an element', () => {
     cy.get('nb-tooltip').should('contain', 'This is a tooltip')
   })
 
-  it.only('tests dialog boxes', () => {
+  it('tests dialog boxes', () => {
     cy.visit('/')
     cy.contains('Tables & Data').click()
     cy.contains('Smart Table').click()
